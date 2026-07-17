@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class MyKNearestNeighborsRegressor:
+class KNearestNeighborsRegressor:
     def __init__(self, count_nearest_neighbors=5):
         self.count_nearest_neighbors = count_nearest_neighbors
 
@@ -25,7 +25,7 @@ class MyKNearestNeighborsRegressor:
         #     distance += (vec1[i] - vec2[i])**2
 
         # return distance**0.5
-        return np.linalg.norm(vec1, vec2)
+        return np.linalg.norm(vec1 - vec2)
     
     def get_neighbors_ids(self, train_x, target_row, k):
         dist_list = []

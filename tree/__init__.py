@@ -1,1 +1,2 @@
 from .dt_regressor import DecisionTreeRegressor
+from .dt_classifier import DecisionTreeClassifier

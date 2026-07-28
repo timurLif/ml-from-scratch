@@ -1,15 +1,15 @@
 import numpy as np
-from dt_regressor import DecisionTreeRegressor
+from ..tree.dt_classifier import DecisionTreeClassifier
 
 
-class RandomDecisionTreeRegressor(DecisionTreeRegressor):
-    def __init__(self, max_depth=None, min_samples_leaf=1):
+class RandomDecisionTreeClassifier(DecisionTreeClassifier):
+    def __init__(self, max_depth, min_samples_leaf):
         super().__init__(max_depth, min_samples_leaf)
     
     def _best_split(self, X, y):
         best_feature_idx = None
         best_threshold = None
-        max_gain = 0.0
+        max_gain = -1.0
 
         max_features = max(1, int(np.sqrt(X.shape[1])))
         random_feature_list = np.random.choice(X.shape[1], size=max_features, replace=False)
@@ -29,7 +29,7 @@ class RandomDecisionTreeRegressor(DecisionTreeRegressor):
                 y_left = y[left_mask]
                 y_right = y[right_mask]
 
-                current_gain = super().variance_reduction(y, y_left, y_right)
+                current_gain = super()._information_gain(y, y_left, y_right)
                 if current_gain > max_gain:
                     max_gain = current_gain
                     best_feature_idx = feature_idx
@@ -38,28 +38,35 @@ class RandomDecisionTreeRegressor(DecisionTreeRegressor):
         return best_feature_idx, best_threshold
 
 
-class RandomForestRegression:
+class RandomForestClassifier:
     def __init__(self, n_estimators, max_depth=None, min_samples_leaf=1):
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
 
     def fit(self, X, y):
-
+        X = np.array(X)
+        y = np.array(y)
         n_samples = X.shape[0]
         self.trees_list = []
 
         for _ in range(self.n_estimators):
-            idx_list = np.random.choice(n_samples, size=n_samples, replace=True)
-            X_boot, y_boot = X[idx_list], y[idx_list]
-
-            tree = RandomDecisionTreeRegressor(self.max_depth, self.min_samples_leaf)
-            tree.fit(X_boot, y_boot)
-
-            self.trees_list.append(tree)
+            samples_idx = np.random.choice(n_samples, n_samples, replace=True)
+            X_boot, y_boot = X[samples_idx], y[samples_idx]
             
-    def predict(self, X):
-        X = np.array(X, dtype=np.float64)
+            tree = RandomDecisionTreeClassifier(max_depth=self.max_depth, min_samples_leaf=self.min_samples_leaf)
+            tree.fit(X_boot, y_boot)
+            self.trees_list.append(tree)
 
-        predictions = [tree.predict(X) for tree in self.trees_list]
-        return np.mean(np.array(predictions, axis=0))
+    def predict(self, X):
+        X = np.array(X)
+        
+        predicts = np.array([tree.predict(X) for tree in self.trees_list])
+
+        result = []
+        for i in range(X.shape[0]):
+            votes = predicts[:, i]
+            most_common = np.bincount(votes).argmax()
+            result.append(most_common)
+        
+        return np.array(result)

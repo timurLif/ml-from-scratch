@@ -1,2 +1,3 @@
 from .dt_regressor import DecisionTreeRegressor
 from .dt_classifier import DecisionTreeClassifier
+from .rf_regressor import RandomForestRegression

@@ -1,5 +1,5 @@
 import numpy as np
-from ..tree.dt_regressor import DecisionTreeRegressor
+from tree.dt_regressor import DecisionTreeRegressor
 
 
 class RandomDecisionTreeRegressor(DecisionTreeRegressor):
@@ -39,7 +39,7 @@ class RandomDecisionTreeRegressor(DecisionTreeRegressor):
 
 
 class RandomForestRegressor:
-    def __init__(self, n_estimators, max_depth=None, min_samples_leaf=1):
+    def __init__(self, n_estimators=10, max_depth=None, min_samples_leaf=1):
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf

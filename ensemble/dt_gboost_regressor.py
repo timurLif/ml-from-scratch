@@ -52,7 +52,7 @@ class DTGradientBoostingRegressor:
     def predict(self, X):
         pred = np.zeros(X.shape[0])
 
-        for idx, tree in range(self.trees_list):
+        for idx, tree in enumerate(self.trees_list):
             pred += (1 / np.sqrt(idx + 1)) * tree.predict(X)
 
         return pred

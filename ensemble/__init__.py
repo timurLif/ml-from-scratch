@@ -1,3 +1,4 @@
 from .rf_regressor import RandomForestRegressor
 from .rf_classifier import RandomForestClassifier
 from .dt_gboost_regressor import DTGradientBoostingRegressor
+from .dt_gboost_classifier import DTGradientBoostingClassifier

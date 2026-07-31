@@ -37,3 +37,18 @@ def f1_score(y_true, y_pred):
     recall = recall_score(y_true, y_pred)
 
     return 2 * precision * recall / (precision + recall)
+
+def roc_auc_score(y_true, y_score):
+    sort_idxs = np.argsort(y_score)[::-1]
+    y_score = y_score[sort_idxs]
+    y_true = y_true[sort_idxs]
+
+    threshold_idxs = np.r_(np.where(np.diff(y_score) != 0)[0])
+
+    tps = np.r_[0, np.cumsum(y_true)[threshold_idxs]]
+    fps = np.r_[0, 1 + threshold_idxs - tps]
+
+    tpr = tps / tps[-1]
+    fpr = fps / fps[-1]
+    
+    return np.trapezoid(tpr, fpr)
